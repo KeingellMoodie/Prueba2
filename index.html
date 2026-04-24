@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Una pregunta importante...</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-pink: #ff006e;
+            --neon-green: #39ff14;
+            --dark-bg: #0a0e27;
+            --grid-color: #1a1f3a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'VT323', monospace;
+            background: var(--dark-bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            color: var(--neon-blue);
+        }
+
+        /* Animated grid background */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+            opacity: 0.3;
+        }
+
+        @keyframes gridMove {
+            0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+            100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(10, 14, 39, 0.9);
+            padding: 3rem 2.5rem;
+            border: 3px solid var(--neon-blue);
+            box-shadow: 
+                0 0 20px var(--neon-blue),
+                inset 0 0 20px rgba(0, 243, 255, 0.1);
+            position: relative;
+            z-index: 10;
+            max-width: 600px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .scanlines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                transparent 50%,
+                rgba(0, 0, 0, 0.1) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            animation: scan 8s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(4px); }
+        }
+
+        h1 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.5rem;
+            color: var(--neon-pink);
+            text-shadow: 
+                0 0 10px var(--neon-pink),
+                0 0 20px var(--neon-pink);
+            margin-bottom: 2rem;
+            line-height: 2;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                text-shadow: 
+                    0 0 10px var(--neon-pink),
+                    0 0 20px var(--neon-pink);
+            }
+            50% {
+                text-shadow: 
+                    0 0 20px var(--neon-pink),
+                    0 0 30px var(--neon-pink),
+                    0 0 40px var(--neon-pink);
+            }
+        }
+
+        .question {
+            font-size: 2rem;
+            margin: 2rem 0;
+            color: var(--neon-green);
+            text-shadow: 0 0 10px var(--neon-green);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.2rem;
+            padding: 1.2rem 2.5rem;
+            border: 3px solid;
+            background: transparent;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .btn-yes {
+            color: var(--neon-green);
+            border-color: var(--neon-green);
+            box-shadow: 0 0 10px var(--neon-green);
+        }
+
+        .btn-yes:hover {
+            background: var(--neon-green);
+            color: var(--dark-bg);
+            box-shadow: 0 0 20px var(--neon-green);
+            transform: scale(1.1);
+        }
+
+        .btn-no {
+            color: var(--neon-pink);
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 10px var(--neon-pink);
+            position: absolute;
+        }
+
+        .btn-no:hover {
+            /* El botón se moverá con JavaScript */
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .success-message {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.3rem;
+            color: var(--neon-green);
+            text-shadow: 0 0 20px var(--neon-green);
+            line-height: 2;
+            animation: successPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes successPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .final-message {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+            color: var(--neon-blue);
+            text-shadow: 0 0 15px var(--neon-blue);
+        }
+
+        .glitch {
+            animation: glitch 0.3s infinite;
+        }
+
+        @keyframes glitch {
+            0% {
+                transform: translate(0);
+            }
+            20% {
+                transform: translate(-2px, 2px);
+            }
+            40% {
+                transform: translate(-2px, -2px);
+            }
+            60% {
+                transform: translate(2px, 2px);
+            }
+            80% {
+                transform: translate(2px, -2px);
+            }
+            100% {
+                transform: translate(0);
+            }
+        }
+
+        .shake {
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px) rotate(-5deg); }
+            75% { transform: translateX(10px) rotate(5deg); }
+        }
+
+        .counter {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            color: var(--neon-pink);
+            text-shadow: 0 0 10px var(--neon-pink);
+        }
+
+        .warning {
+            font-size: 1.3rem;
+            color: var(--neon-pink);
+            margin-top: 1rem;
+            text-shadow: 0 0 10px var(--neon-pink);
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50%, 100% { opacity: 1; }
+            25%, 75% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="mainContainer">
+        <div class="scanlines"></div>
+        <div class="counter" id="counter">Intentos: 0</div>
+
+        <div id="questionScreen">
+            <h1>Sulyyynnnnnnn</h1>
+            <p class="question" id="questionText">
+                Quieres ser mi hermana? 😢
+            </p>
+
+            <div class="buttons">
+                <button class="btn btn-yes" id="btnYes" onclick="acceptAnswer()">
+                    Sí
+                </button>
+                <button class="btn btn-no" id="btnNo">
+                    No
+                </button>
+            </div>
+
+            <p class="warning hidden" id="warning">
+                ⚠️ ERROR: Botón no disponible ⚠️
+            </p>
+        </div>
+
+        <div id="successScreen" class="hidden">
+            <div class="success-message">
+                ¡RESPUESTA ACEPTADA!
+            </div>
+            <p class="final-message" id="finalMessage">
+                Sabía que elegirías bien 😎<br>
+                <span style="font-size: 1.2rem; margin-top: 1rem; display: block;">
+                    Serás mi ONEEESAMAAAA para siempre 💖
+                </span>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const btnNo = document.getElementById('btnNo');
+        const btnYes = document.getElementById('btnYes');
+        const container = document.getElementById('mainContainer');
+        const warning = document.getElementById('warning');
+        const counter = document.getElementById('counter');
+        let attempts = 0;
+
+        // Array de mensajes random que aparecerán
+        const warnings = [
+            "⚠️ ERROR: Botón no disponible ⚠️",
+            "❌ Acceso denegado ❌",
+            "🚫 Nice try... 🚫",
+            "⛔ No tan rápido ⛔",
+            "⛔ ¡NOOOOOOOOOOO! ⛔"
+        ];
+
+        // Hacer que el botón NO se mueva cuando el mouse se acerca
+        btnNo.addEventListener('mouseenter', function() {
+            attempts++;
+            counter.textContent = `Intentos: ${attempts}`;
+            
+            // Mostrar advertencia random
+            warning.textContent = warnings[Math.floor(Math.random() * warnings.length)];
+            warning.classList.remove('hidden');
+            
+            // Efecto de glitch en el contenedor
+            container.classList.add('glitch');
+            setTimeout(() => container.classList.remove('glitch'), 300);
+
+            // Mover el botón a una posición random
+            const maxX = window.innerWidth - 200;
+            const maxY = window.innerHeight - 100;
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
+            
+            btnNo.style.left = randomX + 'px';
+            btnNo.style.top = randomY + 'px';
+
+            // Hacer el botón más pequeño cada vez
+            const newSize = Math.max(0.5, 1 - (attempts * 0.05));
+            btnNo.style.transform = `scale(${newSize})`;
+
+            // Después de 5 intentos, hacer cosas más locas
+            if (attempts >= 5) {
+                btnNo.style.transform = `scale(${newSize}) rotate(${attempts * 45}deg)`;
+            }
+
+            // Después de 10 intentos, hacer el botón súper pequeño y rápido
+            if (attempts >= 10) {
+                btnNo.style.transition = 'all 0.1s ease';
+                btnNo.style.fontSize = '0.5rem';
+            }
+
+            // Shake en el contenedor
+            container.classList.add('shake');
+            setTimeout(() => container.classList.remove('shake'), 500);
+        });
+
+        // También mover cuando intenten hacer click
+        btnNo.addEventListener('click', function(e) {
+            e.preventDefault();
+            attempts += 2;
+            counter.textContent = `Intentos: ${attempts}`;
+            
+            // Mover el botón lejos
+            const maxX = window.innerWidth - 200;
+            const maxY = window.innerHeight - 100;
+            btnNo.style.left = Math.random() * maxX + 'px';
+            btnNo.style.top = Math.random() * maxY + 'px';
+            
+            container.classList.add('glitch');
+            setTimeout(() => container.classList.remove('glitch'), 300);
+        });
+
+        // Hacer el botón SÍ más grande mientras más intentos fallen
+        btnNo.addEventListener('mouseenter', function() {
+            const yesScale = 1 + (attempts * 0.05);
+            btnYes.style.transform = `scale(${Math.min(yesScale, 2)})`;
+        });
+
+        function acceptAnswer() {
+            document.getElementById('questionScreen').classList.add('hidden');
+            document.getElementById('successScreen').classList.remove('hidden');
+            
+            // Confetti effect
+            for (let i = 0; i < 50; i++) {
+                createConfetti();
+            }
+        }
+
+        function createConfetti() {
+            const confetti = document.createElement('div');
+            confetti.style.position = 'fixed';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.top = '-10px';
+            confetti.style.width = '10px';
+            confetti.style.height = '10px';
+            confetti.style.backgroundColor = ['#00f3ff', '#ff006e', '#39ff14'][Math.floor(Math.random() * 3)];
+            confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+            confetti.style.zIndex = '1000';
+            confetti.style.boxShadow = '0 0 10px currentColor';
+            document.body.appendChild(confetti);
+
+            let pos = -10;
+            const interval = setInterval(() => {
+                pos += 5;
+                confetti.style.top = pos + 'px';
+                confetti.style.left = (parseFloat(confetti.style.left) + (Math.random() - 0.5) * 2) + '%';
+                
+                if (pos > window.innerHeight) {
+                    clearInterval(interval);
+                    confetti.remove();
+                }
+            }, 20);
+        }
+    </script>
+</body>
+</html>
